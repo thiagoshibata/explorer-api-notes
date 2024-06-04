@@ -1,4 +1,5 @@
 const AppError = require("../utils/AppError")
+const knex = require("../database/knex")
 const { hash, compare } = require("bcryptjs")
 const sqliteConnection = require("../database/sqlite")
 
@@ -77,6 +78,16 @@ class UsersController {
     )
 
     return response.json({ user })
+  }
+
+  async index(request, response) {
+    const users = await knex("users").groupBy("id")
+
+    if (!users) {
+      throw new AppError("Não existem usuários cadastrados")
+    }
+
+    return response.json(users)
   }
 }
 
